@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kaleidoscope Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border-color: #333;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+            transform: scale(1.15);
+        }
+
+        .symmetry-btn, .size-btn {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .symmetry-btn:hover, .size-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .symmetry-btn.active, .size-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .save-btn {
+            background: #51cf66;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #40c057;
+            transform: translateY(-2px);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .size-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .size-indicator.small {
+            width: 10px;
+            height: 10px;
+        }
+
+        .size-indicator.medium {
+            width: 20px;
+            height: 20px;
+        }
+
+        .size-indicator.large {
+            width: 30px;
+            height: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+
+            .control-section {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="kaleidoscope"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="title">✨ Kaleidoscope ✨</div>
+
+        <div class="control-section">
+            <div class="control-label">Symmetry</div>
+            <div class="button-group">
+                <button class="symmetry-btn active" data-symmetry="4">✚</button>
+                <button class="symmetry-btn" data-symmetry="6">✱</button>
+                <button class="symmetry-btn" data-symmetry="8">✻</button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-label">Colors</div>
+            <div class="button-group">
+                <button class="color-btn active" style="background: #ff6b6b;" data-color="#ff6b6b"></button>
+                <button class="color-btn" style="background: #ff8c42;" data-color="#ff8c42"></button>
+                <button class="color-btn" style="background: #ffd93d;" data-color="#ffd93d"></button>
+                <button class="color-btn" style="background: #6bcf7f;" data-color="#6bcf7f"></button>
+                <button class="color-btn" style="background: #4ecdc4;" data-color="#4ecdc4"></button>
+                <button class="color-btn" style="background: #667eea;" data-color="#667eea"></button>
+                <button class="color-btn" style="background: #c77dff;" data-color="#c77dff"></button>
+                <button class="color-btn" style="background: #ff6ac2;" data-color="#ff6ac2"></button>
+                <button class="color-btn" style="background: #333333;" data-color="#333333"></button>
+                <button class="color-btn" style="background: white; border-color: #ddd;" data-color="#ffffff"></button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-label">Brush Size</div>
+            <div class="button-group">
+                <button class="size-btn" data-size="5">
+                    <div class="size-indicator small"></div>
+                </button>
+                <button class="size-btn active" data-size="15">
+                    <div class="size-indicator medium"></div>
+                </button>
+                <button class="size-btn" data-size="30">
+                    <div class="size-indicator large"></div>
+                </button>
+            </div>
+        </div>
+
+        <button class="action-btn clear-btn">🗑️ Clear</button>
+        <button class="action-btn save-btn">💾 Save</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('kaleidoscope');
+        const ctx = canvas.getContext('2d');
+        
+        // State
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let currentColor = '#ff6b6b';
+        let currentSize = 15;
+        let symmetryCount = 4;
+
+        // Setup canvas
+        function resizeCanvas() {
+            const size = Math.min(window.innerWidth - 40, window.innerHeight - 40, 800);
+            canvas.width = size;
+            canvas.height = size;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Drawing function with symmetry
+        function draw(x, y) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const angle = (Math.PI * 2) / symmetryCount;
+
+            ctx.lineWidth = currentSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = currentColor;
+            ctx.globalAlpha = 0.8;
+
+            for (let i = 0; i < symmetryCount; i++) {
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle * i);
+                ctx.translate(-centerX, -centerY);
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                // Mirror horizontally
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.scale(-1, 1);
+                ctx.translate(-centerX, -centerY);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.restore();
+            }
+
+            ctx.globalAlpha = 1;
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            draw(x, y);
+            lastX = x;
+            lastY = y;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            lastX = touch.clientX - rect.left;
+            lastY = touch.clientY - rect.top;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            draw(x, y);
+            lastX = x;
+            lastY = y;
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDrawing = false;
+        });
+
+        // Color selection
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentColor = btn.dataset.color;
+            });
+        });
+
+        // Symmetry selection
+        document.querySelectorAll('.symmetry-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.symmetry-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                symmetryCount = parseInt(btn.dataset.symmetry);
+            });
+        });
+
+        // Brush size selection
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSize = parseInt(btn.dataset.size);
+            });
+        });
+
+        // Clear button
+        document.querySelector('.clear-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Save button
+        document.querySelector('.save-btn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'kaleidoscope-' + Date.now() + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    </script>
+</body>
+</html>

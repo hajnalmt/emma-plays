@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emma Plays - Interactive Games for Kids</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        .game-thumbnail {
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-thumbnail::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .game-thumbnail .icon {
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .game-content {
+            padding: 25px;
+        }
+
+        .game-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .game-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .meta-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .meta-tag.age {
+            background: #ffecb3;
+            color: #f57f17;
+        }
+
+        .play-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: white;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .coming-soon {
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .coming-soon::after {
+            content: 'Coming Soon';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.95);
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .header .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Emma Plays</h1>
+        <p class="subtitle">Interactive games for curious young minds</p>
+    </div>
+
+    <div class="container">
+        <div class="games-grid">
+            <!-- Kaleidoscope Game -->
+            <div class="game-card">
+                <div class="game-thumbnail" style="background: linear-gradient(135deg, #ff6b6b 0%, #c77dff 50%, #667eea 100%);">
+                    <span class="icon">🌈</span>
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">Kaleidoscope Creator</h2>
+                    <p class="game-description">
+                        Draw beautiful symmetrical patterns with colorful brushes. Explore 4-way, 6-way, and 8-way symmetry while creating magical art!
+                    </p>
+                    <div class="game-meta">
+                        <span class="meta-tag age">Ages 4-7</span>
+                        <span class="meta-tag">Patterns</span>
+                        <span class="meta-tag">Symmetry</span>
+                        <span class="meta-tag">Creativity</span>
+                    </div>
+                    <a href="kaleidoscope/index.html" class="play-button">▶ Play Now</a>
+                </div>
+            </div>
+
+            <!-- Coming Soon Games -->
+            <div class="game-card coming-soon">
+                <div class="game-thumbnail" style="background: linear-gradient(135deg, #ff6ac2 0%, #ff8c42 100%);">
+                    <span class="icon">🦋</span>
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">Number Butterfly Garden</h2>
+                    <p class="game-description">
+                        Watch numbers transform into beautiful butterflies! Learn counting and number recognition in a magical garden.
+                    </p>
+                    <div class="game-meta">
+                        <span class="meta-tag age">Ages 4-7</span>
+                        <span class="meta-tag">Counting</span>
+                        <span class="meta-tag">Numbers</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card coming-soon">
+                <div class="game-thumbnail" style="background: linear-gradient(135deg, #4ecdc4 0%, #6bcf7f 100%);">
+                    <span class="icon">🔷</span>
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">Shape Pattern Builder</h2>
+                    <p class="game-description">
+                        Create and complete patterns with colorful shapes. Learn pattern sequences and logical thinking through play!
+                    </p>
+                    <div class="game-meta">
+                        <span class="meta-tag age">Ages 5-8</span>
+                        <span class="meta-tag">Patterns</span>
+                        <span class="meta-tag">Logic</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card coming-soon">
+                <div class="game-thumbnail" style="background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%);">
+                    <span class="icon">🌀</span>
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">Rainbow Spiral Drawer</h2>
+                    <p class="game-description">
+                        Draw mesmerizing mathematical spirals and curves. Explore Fibonacci sequences and golden ratios through art!
+                    </p>
+                    <div class="game-meta">
+                        <span class="meta-tag age">Ages 6-10</span>
+                        <span class="meta-tag">Math</span>
+                        <span class="meta-tag">Art</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Made with ❤️ for Emma and all curious kids</p>
+        <p style="margin-top: 10px;">
+            <a href="https://github.com/hajnalmt/emma-plays" target="_blank">View on GitHub</a>
+        </p>
+    </div>
+</body>
+</html>
