@@ -20,6 +20,22 @@ Draw beautiful symmetrical patterns with various colors and symmetry modes.
 - Save artwork as PNG images
 - Touch-screen optimized
 
+### 🌀 Rainbow Spiral Drawer
+Create mesmerizing mathematical spirals with auto-cycling rainbow colors.
+
+- **Age:** 4-7 years
+- **Skills:** Mathematical patterns, spatial reasoning, creativity, cause-and-effect
+- **Play:** [Launch Game](https://hajnalmt.github.io/emma-plays/rainbow-spiral/) | [Source](rainbow-spiral/)
+
+**Features:**
+- Two spiral types (Archimedean and Golden/Logarithmic)
+- Auto-cycling rainbow colors
+- Three line sizes
+- Adjustable rainbow speed
+- Clockwise and counter-clockwise direction
+- Save artwork as PNG images
+- Interactive drag-to-draw spirals
+
 ## 🌟 Features
 
 - ✅ **No installation required** - runs in any modern browser
@@ -69,6 +85,7 @@ Each game targets specific developmental skills:
 | Game | Math Concepts | Creative Skills | Motor Skills |
 |------|---------------|-----------------|--------------|
 | Kaleidoscope | Symmetry, patterns, geometry | Color theory, artistic expression | Fine motor control, hand-eye coordination |
+| Rainbow Spiral Drawer | Spirals, mathematical curves, growth patterns | Rainbow art, spatial creativity | Gesture control, dragging precision |
 
 ## 🗺️ Roadmap
 

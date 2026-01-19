@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Rainbow Spiral Drawer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 50%, #ff6ac2 100%);
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+            max-width: 250px;
+        }
+
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .spiral-btn, .size-btn, .speed-btn, .direction-btn {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .spiral-btn:hover, .size-btn:hover, .speed-btn:hover, .direction-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .spiral-btn.active, .size-btn.active, .speed-btn.active, .direction-btn.active {
+            border-color: #ff8c42;
+            background: #ff8c42;
+            color: white;
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.3);
+            transform: scale(1.05);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .save-btn {
+            background: #51cf66;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #40c057;
+            transform: translateY(-2px);
+        }
+
+        .home-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .home-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff8c42;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .size-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .size-indicator.small {
+            width: 10px;
+            height: 10px;
+        }
+
+        .size-indicator.medium {
+            width: 20px;
+            height: 20px;
+        }
+
+        .size-indicator.large {
+            width: 30px;
+            height: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 15px;
+                max-width: none;
+            }
+
+            .control-section {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="spiral-canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="title">🌀 Rainbow Spirals 🌀</div>
+
+        <div class="control-section">
+            <div class="control-label">Spiral Type</div>
+            <div class="button-group">
+                <button class="spiral-btn active" data-spiral="archimedean" title="Magic Spiral">✨</button>
+                <button class="spiral-btn" data-spiral="golden" title="Snail Spiral">🐌</button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-label">Line Size</div>
+            <div class="button-group">
+                <button class="size-btn" data-size="3">
+                    <div class="size-indicator small"></div>
+                </button>
+                <button class="size-btn active" data-size="8">
+                    <div class="size-indicator medium"></div>
+                </button>
+                <button class="size-btn" data-size="15">
+                    <div class="size-indicator large"></div>
+                </button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-label">Rainbow Speed</div>
+            <div class="button-group">
+                <button class="speed-btn active" data-speed="0.5" title="Slow">🐢</button>
+                <button class="speed-btn" data-speed="2" title="Fast">🚀</button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-label">Direction</div>
+            <div class="button-group">
+                <button class="direction-btn active" data-direction="1" title="Clockwise">↻</button>
+                <button class="direction-btn" data-direction="-1" title="Counter-clockwise">↺</button>
+            </div>
+        </div>
+
+        <button class="action-btn clear-btn">🗑️ Clear</button>
+        <button class="action-btn save-btn">💾 Save</button>
+        <button class="action-btn home-btn" onclick="window.location.href='../index.html'">🏠 Home</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('spiral-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // State
+        let isDrawing = false;
+        let startX = 0;
+        let startY = 0;
+        let currentSize = 8;
+        let spiralType = 'archimedean';
+        let rainbowSpeed = 0.5;
+        let direction = 1;
+        let spiralPoints = [];
+
+        // Setup canvas
+        function resizeCanvas() {
+            const size = Math.min(window.innerWidth - 40, window.innerHeight - 40, 800);
+            canvas.width = size;
+            canvas.height = size;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Calculate spiral point based on type
+        function calculateSpiralPoint(angle, distance, type) {
+            let r;
+            
+            if (type === 'archimedean') {
+                // Archimedean spiral: r = a + b*θ
+                // Simple linear growth
+                r = distance * 0.8;
+            } else if (type === 'golden') {
+                // Logarithmic/Golden spiral: r = a * e^(b*θ)
+                // Growth factor based on golden ratio
+                const b = 0.15; // Growth rate
+                r = 5 * Math.exp(b * angle);
+            }
+            
+            const x = startX + r * Math.cos(angle);
+            const y = startY + r * Math.sin(angle);
+            
+            return { x, y };
+        }
+
+        // Draw spiral from start point to current mouse position
+        function drawSpiral(currentX, currentY) {
+            const dx = currentX - startX;
+            const dy = currentY - startY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // Calculate angle based on mouse position
+            let mouseAngle = Math.atan2(dy, dx);
+            
+            // Determine how many rotations based on distance
+            const maxRotations = Math.max(1, Math.floor(distance / 50));
+            const angleStep = (Math.PI * 2 * maxRotations) / 100;
+            
+            ctx.lineWidth = currentSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.globalAlpha = 0.8;
+            
+            let lastPoint = null;
+            
+            // Draw spiral from center outward
+            for (let i = 0; i <= 100; i++) {
+                const angle = (angleStep * i * direction);
+                const spiralDist = (distance / 100) * i;
+                
+                const point = calculateSpiralPoint(angle, spiralDist, spiralType);
+                
+                // Calculate rainbow color based on angle
+                const hue = ((angle * rainbowSpeed * 50) % 360 + 360) % 360;
+                ctx.strokeStyle = `hsl(${hue}, 85%, 55%)`;
+                
+                if (lastPoint) {
+                    ctx.beginPath();
+                    ctx.moveTo(lastPoint.x, lastPoint.y);
+                    ctx.lineTo(point.x, point.y);
+                    ctx.stroke();
+                }
+                
+                lastPoint = point;
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+
+        // Get coordinates from event (mouse or touch)
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            }
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const coords = getCoordinates(e);
+            startX = coords.x;
+            startY = coords.y;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            const coords = getCoordinates(e);
+            
+            // Clear and redraw entire spiral on each move for smooth animation
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            redrawAllSpirals();
+            drawSpiral(coords.x, coords.y);
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (isDrawing) {
+                const coords = getCoordinates(e);
+                // Save the final spiral
+                saveSpiral(coords.x, coords.y);
+            }
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDrawing = true;
+            const coords = getCoordinates(e);
+            startX = coords.x;
+            startY = coords.y;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const coords = getCoordinates(e);
+            
+            // Clear and redraw
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            redrawAllSpirals();
+            drawSpiral(coords.x, coords.y);
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (isDrawing && e.changedTouches[0]) {
+                const rect = canvas.getBoundingClientRect();
+                const coords = {
+                    x: e.changedTouches[0].clientX - rect.left,
+                    y: e.changedTouches[0].clientY - rect.top
+                };
+                saveSpiral(coords.x, coords.y);
+            }
+            isDrawing = false;
+        });
+
+        // Save spiral to permanent array
+        function saveSpiral(endX, endY) {
+            spiralPoints.push({
+                startX,
+                startY,
+                endX,
+                endY,
+                type: spiralType,
+                size: currentSize,
+                speed: rainbowSpeed,
+                direction: direction
+            });
+        }
+
+        // Redraw all saved spirals
+        function redrawAllSpirals() {
+            spiralPoints.forEach(spiral => {
+                const savedType = spiralType;
+                const savedSize = currentSize;
+                const savedSpeed = rainbowSpeed;
+                const savedDir = direction;
+                
+                // Temporarily use saved settings
+                spiralType = spiral.type;
+                currentSize = spiral.size;
+                rainbowSpeed = spiral.speed;
+                direction = spiral.direction;
+                startX = spiral.startX;
+                startY = spiral.startY;
+                
+                drawSpiral(spiral.endX, spiral.endY);
+                
+                // Restore current settings
+                spiralType = savedType;
+                currentSize = savedSize;
+                rainbowSpeed = savedSpeed;
+                direction = savedDir;
+            });
+        }
+
+        // Spiral type selection
+        document.querySelectorAll('.spiral-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.spiral-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                spiralType = btn.dataset.spiral;
+            });
+        });
+
+        // Size selection
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSize = parseInt(btn.dataset.size);
+            });
+        });
+
+        // Speed selection
+        document.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                rainbowSpeed = parseFloat(btn.dataset.speed);
+            });
+        });
+
+        // Direction selection
+        document.querySelectorAll('.direction-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                direction = parseInt(btn.dataset.direction);
+            });
+        });
+
+        // Clear button
+        document.querySelector('.clear-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            spiralPoints = [];
+        });
+
+        // Save button
+        document.querySelector('.save-btn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'rainbow-spiral-' + Date.now() + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    </script>
+</body>
+</html>
