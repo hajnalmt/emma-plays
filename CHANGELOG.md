@@ -142,6 +142,13 @@ emma-plays/
 - **Target Age Range:** 4-10 years
 - **Supported Languages:** English (UI mostly icon-based)
 
+### Commits
+
+- `c96da7a` - Initial commit - Repository setup with basic structure (@hajnalmt)
+- `b550837` - Add Kaleidoscope Creator game and project structure - First playable game implementation (@hajnalmt)
+- `5a33f7b` - Add comprehensive project documentation structure - README, CONTRIBUTING, ROADMAP added (@hajnalmt)
+- `e4cf22f` - Add agent configuration for changelog and git workflow - AGENTS.md with changelog management (@hajnalmt)
+
 ### Credits
 
 - **Created by:** Hajnal Máté
