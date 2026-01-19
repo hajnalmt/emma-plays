@@ -7,10 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### Rainbow Spiral Drawer Game
+Second playable game focused on mathematical spirals and rainbow patterns.
+
+**Features:**
+- Two spiral types: Magic Spiral (Archimedean) and Snail Spiral (Golden/Logarithmic)
+- Auto-cycling rainbow colors using HSL color space
+- Three line sizes: small (3px), medium (8px), large (15px)
+- Two rainbow speeds: slow (0.5x), fast (2x)
+- Two directions: clockwise and counter-clockwise
+- Interactive drag-to-draw interface
+- Canvas state persistence for multiple spirals
+- Save artwork as PNG with timestamped filename
+- Clear canvas function
+- Touch and mouse support
+- Responsive design
+
+**Technical Implementation:**
+- Mathematical spiral formulas: Archimedean (r = a + b*θ) and Golden (r = a*e^(b*θ))
+- Distance-based angle calculation for spiral generation
+- HSL color cycling for smooth rainbow effect
+- Canvas redraw system for state management
+- Self-contained single HTML file (503 lines, ~16KB)
+
+**Educational Value:**
+- Introduces Archimedean spirals (constant spacing, linear growth)
+- Introduces logarithmic/golden spirals (exponential growth, found in nature)
+- Demonstrates rainbow color spectrum
+- Teaches pattern recognition and geometric forms
+- Shows mathematical curves in nature (nautilus shells, galaxies, watch springs)
+
+**Integration:**
+- Game card activated in main catalog
+- Age range simplified from 6-10 to 4-7 years
+- README updated with game documentation
+- Session planning documents created
+
 ### Planned
 - Number Butterfly Garden game (v0.2.0)
 - Shape Pattern Builder game (v0.3.0)
-- Rainbow Spiral Drawer game (v0.4.0)
 - Music Pattern Maker game (v0.5.0)
 - GitHub Pages deployment
 - Progressive Web App (PWA) support
@@ -134,15 +171,21 @@ emma-plays/
 
 ### Statistics
 
-- **Repository Size:** ~42KB (minimal, fast loading)
-- **Lines of Code:** ~950 lines (excluding documentation)
-- **Documentation:** ~1,200 lines
-- **Games Playable:** 1
-- **Games Planned:** 4
+- **Repository Size:** ~58KB
+- **Lines of Code:** ~1,450 lines (excluding documentation)
+- **Documentation:** ~3,700 lines
+- **Games Playable:** 2
+- **Games Planned:** 3
 - **Target Age Range:** 4-10 years
 - **Supported Languages:** English (UI mostly icon-based)
 
 ### Commits
+
+#### Unreleased
+
+- `fa63828` - Add Rainbow Spiral Drawer game with mathematical spirals and auto-rainbow colors - Second playable game featuring Archimedean and golden spirals (@hajnalmt)
+
+#### v0.1.0
 
 - `c96da7a` - Initial commit - Repository setup with basic structure (@hajnalmt)
 - `b550837` - Add Kaleidoscope Creator game and project structure - First playable game implementation (@hajnalmt)
